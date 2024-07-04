@@ -1,0 +1,22 @@
+{
+    "expn": "opt-350m-2-la",
+    "device": "cuda",
+    "learnable_add": true,
+    "load_ref_model": false,
+    "ref_model_dir": "model_repo/opt-350m",
+    "ref_model_dtype": null,
+    "finetune_embedding": true,
+    "max_seq_len": 512,
+    "batch_size": 50,
+    "base_lr": 1e-4,
+    "num_hidden_layers": 2,
+    "dist_train": true,
+    "resume_train": true,
+    "teleds_ip": "127.0.0.1",
+    "teleds_port": 8000,
+    "dataloader_num_workers": 64,
+    "dataloader_prefetch_factor": 20,
+    "save_checkpoint_iters": 10000,
+    "pretrain_epoches": 2,
+    "warmup_iters": 5000
+}
