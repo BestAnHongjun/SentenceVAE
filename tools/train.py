@@ -12,7 +12,7 @@ from mmengine.dist.utils import init_dist
 
 from sentence_vae.utils import get_config, get_tokenizer, get_dtype
 from sentence_vae.models import SentenceVAE
-from sentence_vae.data import TeleDSDataset, TeleDSCollate
+from sentence_vae.data import TeleDSDataset, SentenceCollate
 
 
 def make_parser():
@@ -60,7 +60,7 @@ def main(args):
 
     train_dataset = TeleDSDataset(server_ip=cfg["teleds_ip"], server_port=cfg["teleds_port"])
     train_sampler = DefaultSampler(train_dataset, shuffle=False)
-    train_collate_fn = TeleDSCollate(tokenizer=tokenizer, max_len=cfg["max_seq_len"], padding=True)
+    train_collate_fn = SentenceCollate(tokenizer=tokenizer, max_len=cfg["max_seq_len"], padding=True)
 
     train_dataloader = DataLoader(
         dataset=train_dataset,
