@@ -2,7 +2,7 @@
 *~
 
 # user experiments directory
-model_repo/
+model_repo*
 datasets/
 exp/
 test*
