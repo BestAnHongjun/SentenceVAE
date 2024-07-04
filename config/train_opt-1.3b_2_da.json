@@ -1,0 +1,22 @@
+{
+    "expn": "opt-1.3b-2-da",
+    "device": "cuda",
+    "learnable_add": false,
+    "load_ref_model": false,
+    "ref_model_dir": "model_repo/opt-1.3b",
+    "ref_model_dtype": null,
+    "finetune_embedding": true,
+    "max_seq_len": 512,
+    "batch_size": 120,
+    "base_lr": 2e-5,
+    "num_hidden_layers": 2,
+    "dist_train": true,
+    "resume_train": true,
+    "teleds_ip": "10.127.23.134",
+    "teleds_port": 16680,
+    "dataloader_num_workers": 64,
+    "dataloader_prefetch_factor": 20,
+    "save_checkpoint_iters": 10000,
+    "pretrain_epoches": 2,
+    "warmup_iters": 5000
+}
