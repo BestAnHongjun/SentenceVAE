@@ -10,5 +10,6 @@
     "teleds_ip": "127.0.0.1",
     "teleds_port": 8001,
     "dataloader_num_workers": 64,
-    "dataloader_prefetch_factor": 20
+    "dataloader_prefetch_factor": 20,
+    "max_eval_samples": 1000
 }
