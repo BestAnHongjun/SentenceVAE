@@ -2,3 +2,4 @@ mmengine
 torch
 transformers
 tensorboard
+accelerate
