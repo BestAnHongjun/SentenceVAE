@@ -2,7 +2,7 @@
     "expn": "opt-2.7b-2-la-fe",
     "device": "cuda",
     "learnable_add": true,
-    "load_ref_model": false,
+    "load_ref_model": true,
     "ref_model_dir": "model_repo/opt-2.7b",
     "ref_model_dtype": null,
     "finetune_embedding": false,
