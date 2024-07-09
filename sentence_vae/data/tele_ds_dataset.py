@@ -37,9 +37,11 @@ class TeleDSDataset(Dataset):
     def __init__(
         self, 
         server_ip="127.0.0.1", 
-        server_port=8000
+        server_port=8000,
+        max_samples=None
     ):
         self.server_url = f"http://{server_ip}:{server_port}"
+        self.max_samples = None
 
     def __len__(self):
         while True:
@@ -51,6 +53,8 @@ class TeleDSDataset(Dataset):
             sleep(1)
         print("Server is ready!")
         num = int(fetch_text_with_retry(f"{self.server_url}/count").strip())
+        if self.max_samples is not None:
+            return num if num < self.max_samples else self.max_samples
         return num
     
     def __getitem__(self, idx):
