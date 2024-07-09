@@ -85,6 +85,11 @@ class LLMSentenceVAE(BaseModel):
 
         self.fc = nn.Linear(hidden_size, 2)
 
+        if vae_model_path is not None:
+            print(f"Loading {vae_model_path}")
+            ckpt = torch.load(vae_model_path)
+            self.vae.load_state_dict(ckpt['state_dict'])
+
         self.to(self.dtype)
         self.to(self.device)
 
@@ -98,7 +103,7 @@ class LLMSentenceVAE(BaseModel):
             param.requires_grad = False
 
 
-    def forward(self, sentence_mask, sentence_toks, tok_mask, model='loss'):
+    def forward(self, sentence_mask, sentence_toks, tok_mask, mode='loss'):
         sentence_mask = sentence_mask.to(self.device)
         sentence_toks = sentence_toks.to(self.device)
         tok_mask = tok_mask.to(self.device)
