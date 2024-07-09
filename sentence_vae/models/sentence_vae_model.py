@@ -52,7 +52,7 @@ class SentenceVAE(BaseModel):
         word_embed_proj_dim: int = None,
         num_attention_heads: int = 16, 
         num_hidden_layers: int = 1,
-        max_seq_len: int = 1024,
+        max_seq_len: int = 512,
         dropout: float = 0.1,
         bos_id=2,
         pad_id=1,
