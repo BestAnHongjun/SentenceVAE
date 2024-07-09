@@ -96,19 +96,18 @@ class SentenceVAE(BaseModel):
             attention_mask = torch.ones(input_ids.shape, dtype=torch.int64, device=self.device)
 
         sentence_embd = self.encoder(input_ids, attention_mask)
-        if mode == 'loss':
-            assert self.training
-            output = self.decoder(input_ids, sentence_embd, attention_mask)
-            batch, _ = input_ids.shape
-            pad_ids = torch.zeros((batch, 1), device=self.device, dtype=input_ids.dtype).fill_(self.pad_token_id)
-            tgt_ids = torch.cat((input_ids, pad_ids), dim=1)
-            seq_lens = torch.sum(attention_mask, dim=1, keepdim=True)
-            tgt_ids.scatter_(1, seq_lens, self.eos_token_id)
-            attention_mask = attention_mask.bool()
-            return {"totoal_loss": F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])}
+
+        output = self.decoder(input_ids, sentence_embd, attention_mask)
+        batch, _ = input_ids.shape
+        pad_ids = torch.zeros((batch, 1), device=self.device, dtype=input_ids.dtype).fill_(self.pad_token_id)
+        tgt_ids = torch.cat((input_ids, pad_ids), dim=1)
+        seq_lens = torch.sum(attention_mask, dim=1, keepdim=True)
+        tgt_ids.scatter_(1, seq_lens, self.eos_token_id)
+        attention_mask = attention_mask.bool()
+        return {"total_loss": F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])}
         
-        elif mode == 'predict':
-            assert not self.training
+        # elif mode == 'predict':
+        #     assert not self.training
             # batch, _ = input_ids.shape 
             # with torch.no_grad():
             #     output_ids = torch.zeros((batch, 1), dtype=torch.int64, device=self.device).fill_(self.bos_token_id)
@@ -133,7 +132,7 @@ class SentenceVAE(BaseModel):
 
             # return output_ids, output_masks
         
-        else:   # tensor
-            output = self.decoder(input_ids, sentence_embd, attention_mask)
-            return output
+        # else:   # tensor
+        #     output = self.decoder(input_ids, sentence_embd, attention_mask)
+        #     return output
         
