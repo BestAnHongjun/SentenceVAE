@@ -34,9 +34,9 @@ def load_json(json_path):
 def main(args):
     cfg = load_json(args.config)
     ref_model_cfg = get_config(cfg["ref_model_dir"])
-    work_dir = f"exp/SentenceVAE-{cfg['expn']}"
+    vae_dir = f"exp/SentenceVAE-{cfg['vae_expn']}"
 
-    best_ckpt_path = os.path.join(work_dir, "best_checkpoint")
+    best_ckpt_path = os.path.join(vae_dir, "best_checkpoint")
     if os.path.exists(best_ckpt_path):
         with open(best_ckpt_path, "r") as f:
             best_ckpt_path = f.read().strip()
@@ -59,18 +59,19 @@ def main(args):
         llm_finetune_layers=cfg["llm_finetune_layers"],
         num_attention_heads=ref_model_cfg.num_attention_heads,
         num_hidden_layers=cfg["num_hidden_layers"],
-        max_sentence_len=cfg["max_seq_len"],
+        max_sentence_len=cfg["max_sen_len"],
+        max_sentence_num=cfg["max_sen_num"],
         dropout=ref_model_cfg.dropout,
         bos_id=ref_model_cfg.bos_token_id,
         pad_id=ref_model_cfg.pad_token_id,
         end_id=ref_model_cfg.eos_token_id
     )
 
-    tokenizer = get_tokenizer(ckpt_path=cfg["ref_model_dir"], max_seq_len=cfg["max_seq_len"])
+    tokenizer = get_tokenizer(ckpt_path=cfg["ref_model_dir"], max_seq_len=cfg["max_sen_len"])
 
     train_dataset = TeleDSDataset(server_ip=cfg["teleds_ip"], server_port=cfg["teleds_port"])
     train_sampler = DefaultSampler(train_dataset, shuffle=False)
-    train_collate_fn = PassageCollate(tokenizer=tokenizer, max_sentence_len=512, max_sentence_num=128, padding=True)
+    train_collate_fn = PassageCollate(tokenizer=tokenizer, max_sentence_len=cfg["max_sen_len"], max_sentence_num=cfg["max_sen_num"], padding=True)
 
     train_dataloader = DataLoader(
         dataset=train_dataset,
