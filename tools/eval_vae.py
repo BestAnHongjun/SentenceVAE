@@ -1,9 +1,14 @@
+import os
+import re
 import sys 
 import json
 import argparse
+import numpy as np
+from tqdm import tqdm
 
 import torch
 from torch.utils.data import DataLoader
+from torch.utils.tensorboard import SummaryWriter
 
 from mmengine.config import Config
 from mmengine.runner import Runner, IterBasedTrainLoop 
@@ -18,8 +23,6 @@ from sentence_vae.data import TeleDSDataset, SentenceCollate
 def make_parser():
     parser = argparse.ArgumentParser("SentenceVAE eval parser.")
     parser.add_argument("-c", "--config", type=str, required=True)
-    # parser.add_argument("--local-rank", "--local_rank", type=int, default=0)
-    # parser.add_argument('--launcher', choices=['none', 'pytorch', 'slurm', 'mpi'], default='none', help='job launcher')
     return parser
 
 
@@ -30,10 +33,18 @@ def load_json(json_path):
     return cfg
 
 
+def extract_iter(filename):
+    match = re.match(r"iter_(\d+)\.pth", filename)
+    if match:
+        return int(match.group(1))
+    return None
+
+
 def main(args):
     cfg = load_json(args.config)
     ref_model_cfg = get_config(cfg["ref_model_dir"])
     work_dir = f"exp/SentenceVAE-{cfg['expn']}"
+    writer = SummaryWriter(os.path.join(work_dir, "eval"))
 
     model = SentenceVAE(
         hidden_size=ref_model_cfg.hidden_size,
@@ -54,14 +65,9 @@ def main(args):
         end_id=ref_model_cfg.eos_token_id
     )
 
-    # print(work_dir)
-
-    # print(model)
-    # exit(0)
-
     tokenizer = get_tokenizer(ckpt_path=cfg["ref_model_dir"], max_seq_len=cfg["max_seq_len"])
 
-    eval_dataset = TeleDSDataset(server_ip=cfg["teleds_ip"], server_port=cfg["teleds_port"], max_samples=1000)
+    eval_dataset = TeleDSDataset(server_ip=cfg["teleds_ip"], server_port=cfg["teleds_port"], max_samples=cfg["max_eval_samples"])
     eval_sampler = DefaultSampler(eval_dataset, shuffle=False)
     eval_collate_fn = SentenceCollate(tokenizer=tokenizer, max_len=cfg["max_seq_len"], padding=True)
 
@@ -74,25 +80,38 @@ def main(args):
         prefetch_factor=cfg["dataloader_prefetch_factor"]
     )
 
-    for data in eval_dataloader:
-        print(data)
+    ckpt_list = os.listdir(work_dir)
+    best_ppl, best_ckpt = np.exp(20), None
+    for ckpt_name in tqdm(ckpt_list):
+        iter_n = extract_iter(ckpt_name)
+        if iter_n is None: continue
+        ckpt_path = os.path.join(work_dir, ckpt_name)
+        ckpt = torch.load(ckpt_path)
+        model.load_state_dict(ckpt["state_dict"])
+        model.eval()
+        
+        loss_list = []
+        for data in eval_dataloader:
+            loss = model(*data, mode='loss')['total_loss'].item()
+            loss_list.append(loss)
+        mean_loss = np.mean(np.array(loss_list))
+        ppl = np.exp(mean_loss)
 
-    # default_hooks=dict(checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=cfg["save_checkpoint_iters"]))
-    # runner = Runner(
-    #     model=model,
-    #     work_dir=f"exp/SentenceVAE-{cfg['expn']}",
-    #     train_dataloader=train_dataloader,
-    #     train_cfg=dict(by_epoch=True, max_epochs=cfg["pretrain_epoches"]),
-    #     optim_wrapper=dict(optimizer=dict(type='SGD', lr=learning_rate, momentum=0.9, weight_decay=5e-3)),
-    #     param_scheduler=[
-    #         dict(type='LinearLR', start_factor=1e-3, by_epoch=False, begin=0, end=cfg["warmup_iters"]),
-    #         dict(type='CosineAnnealingLR', by_epoch=True, T_max=cfg["pretrain_epoches"], convert_to_iter_based=True)
-    #     ],
-    #     visualizer=dict(type='Visualizer', vis_backends=[dict(type='TensorboardVisBackend')]),
-    #     default_hooks=default_hooks,
-    #     resume=cfg["resume_train"]
-    # )
-    # runner.train()
+        writer.add_scalar("Eval/PPL", ppl, iter_n)
+        writer.add_scalar("Eval/Loss", mean_loss, iter_n)
+
+        if ppl < best_ppl:
+            best_ppl = ppl 
+            best_ckpt = ckpt_path
+    
+    with open(os.path.join(work_dir, "best_checkpoint"), "w") as f:
+        f.write(ckpt_path)
+    with open(os.path.join(work_dir, "eval", "log.txt"), "w") as f:
+        f.write(f"Exp:{work_dir}\nBest PPL:{best_ppl}\nBest ckpt:{best_ckpt}")
+    
+    print("Exp:", work_dir)
+    print("Best PPL:", best_ppl)
+    print("Best ckpt:", best_ckpt)
 
 
 if __name__ == "__main__":
