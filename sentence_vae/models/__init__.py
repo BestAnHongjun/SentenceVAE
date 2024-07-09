@@ -30,3 +30,4 @@ from .positional_encoding import PositionalEncodding
 from .sentence_encoder import SentenceEncoder
 from .sentence_decoder import SentenceDecoder
 from .sentence_vae_model import SentenceVAE
+from .llm_vae_model import LLMSentenceVAE
