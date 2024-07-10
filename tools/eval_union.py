@@ -17,8 +17,8 @@ from mmengine.dataset import DefaultSampler
 from mmengine.dist.utils import init_dist
 
 from sentence_vae.utils import get_config, get_tokenizer, get_dtype
-from sentence_vae.models import SentenceVAE
-from sentence_vae.data import TeleDSDataset, SentenceCollate
+from sentence_vae.models import LLMSentenceVAE
+from sentence_vae.data import TeleDSDataset, PassageCollate
 
 
 def make_parser():
@@ -47,30 +47,31 @@ def main(args):
     work_dir = f"exp/SentenceVAE-{cfg['expn']}"
     writer = SummaryWriter(f"exp/eval/SentenceVAE-{cfg['expn']}")
 
-    model = SentenceVAE(
+    model = LLMSentenceVAE(
         hidden_size=ref_model_cfg.hidden_size,
         vocab_size=ref_model_cfg.vocab_size,
         device=torch.device(cfg["device"]),
         dtype=ref_model_cfg.torch_dtype,
         learnable_add=cfg["learnable_add"],
-        load_ref_model=False,
-        ref_model_dir=None,
+        vae_model_path=None,
+        ref_model_dir=cfg["ref_model_dir"],
         ref_model_dtype=None,
-        finetune_embedding=False,
+        llm_finetune_layers=cfg["llm_finetune_layers"],
         num_attention_heads=ref_model_cfg.num_attention_heads,
         num_hidden_layers=cfg["num_hidden_layers"],
-        max_seq_len=cfg["max_seq_len"],
+        max_sentence_len=cfg["max_sen_len"],
+        max_sentence_num=cfg["max_sen_num"],
         dropout=ref_model_cfg.dropout,
         bos_id=ref_model_cfg.bos_token_id,
         pad_id=ref_model_cfg.pad_token_id,
         end_id=ref_model_cfg.eos_token_id
     )
 
-    tokenizer = get_tokenizer(ckpt_path=cfg["ref_model_dir"], max_seq_len=cfg["max_seq_len"])
+    tokenizer = get_tokenizer(ckpt_path=cfg["ref_model_dir"], max_seq_len=cfg["max_sen_len"])
 
     eval_dataset = TeleDSDataset(server_ip=cfg["teleds_ip"], server_port=cfg["teleds_port"], max_samples=cfg["max_eval_samples"])
     eval_sampler = DefaultSampler(eval_dataset, shuffle=False)
-    eval_collate_fn = SentenceCollate(tokenizer=tokenizer, max_len=cfg["max_seq_len"], padding=True)
+    eval_collate_fn = PassageCollate(tokenizer=tokenizer, max_sentence_len=cfg["max_sen_len"], max_sentence_num=cfg["max_sen_num"], padding=True)
 
     eval_dataloader = DataLoader(
         dataset=eval_dataset,
@@ -92,18 +93,20 @@ def main(args):
         model.eval()
         
         loss_list = []
+        stop_loss_list = []
         for data in eval_dataloader:
-            loss = model(*data, mode='loss')['total_loss'].item()
+            ret = model(*data, mode='loss')
+            loss = ret['decode_loss'].item()
+            stop_loss = ret['stop_loss'].item()
             loss_list.append(loss)
+            stop_loss_list.append(stop_loss)
         mean_loss = np.mean(np.array(loss_list))
-
+        stop_loss = np.mean(np.array(stop_loss_list))
         ppl = np.exp(mean_loss)
-
-        if ppl >= np.exp(20) or np.isnan(ppl) or np.isinf(ppl):
-            continue
 
         writer.add_scalar("Eval/PPL", ppl, iter_n)
         writer.add_scalar("Eval/Loss", mean_loss, iter_n)
+        writer.add_scalar("Eval/StopLoss", stop_loss, iter_n)
 
         if ppl < best_ppl:
             best_ppl = ppl 

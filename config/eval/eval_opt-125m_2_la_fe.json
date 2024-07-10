@@ -1,8 +1,8 @@
 {
-    "expn": "opt-350m-2-da",
+    "expn": "opt-125m-2-la-fe",
     "device": "cuda",
-    "learnable_add": false,
-    "ref_model_dir": "model_repo/opt-350m",
+    "learnable_add": true,
+    "ref_model_dir": "model_repo/opt-125m",
     "max_seq_len": 512,
     "batch_size": 50,
     "num_hidden_layers": 2,
