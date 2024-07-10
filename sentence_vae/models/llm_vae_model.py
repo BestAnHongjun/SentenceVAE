@@ -93,7 +93,7 @@ class LLMSentenceVAE(BaseModel):
         self.to(self.dtype)
         self.to(self.device)
 
-        self._freeze_model(self.vae)
+        # self._freeze_model(self.vae)
         for i in range(llm_finetune_layers, len(self.llm_layers) - llm_finetune_layers):
             self._freeze_model(self.llm_layers[i])
     
@@ -153,6 +153,12 @@ class LLMSentenceVAE(BaseModel):
             tgt_ids.scatter_(1, seq_lens, self.eos_token_id)
             attention_mask = attention_mask.bool()
             decode_loss += F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])
+            del input_ids
+            del attention_mask
+            del sentence_embd
+            del output 
+            del pad_ids 
+            del tgt_ids
         decode_loss /= batch_size
         
         return {"stop_loss": stop_loss, "decode_loss": decode_loss}
