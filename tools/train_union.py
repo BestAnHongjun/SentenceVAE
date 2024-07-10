@@ -15,6 +15,8 @@ from sentence_vae.utils import get_config, get_tokenizer, get_dtype
 from sentence_vae.models import LLMSentenceVAE
 from sentence_vae.data import TeleDSDataset, SentenceCollate, PassageCollate
 
+torch.multiprocessing.set_sharing_strategy('file_system')
+
 
 def make_parser():
     parser = argparse.ArgumentParser("SentenceVAE train parser.")
