@@ -79,7 +79,7 @@ class LLMSentenceVAE(BaseModel):
         )
 
         ref_model_dtype = ref_model_dtype if ref_model_dtype else self.dtype
-        llm = get_model(ref_model_dir, ref_model_dtype, self.device)
+        llm = get_model(ref_model_dir, ref_model_dtype, self.device, True)
         self.llm_pe = llm.model.decoder.embed_positions
         self.llm_layers = llm.model.decoder.layers
 

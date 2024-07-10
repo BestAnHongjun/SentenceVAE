@@ -40,7 +40,7 @@ def is_model_on_gpu(model) -> bool:
     return all("cuda" in str(param.device) for param in model.parameters())
 
 
-def get_model(ckpt_path, dtype="fp16", device="cuda"):
+def get_model(ckpt_path, dtype="fp16", device="cuda", dist=False):
     print(f"Initializaing model from {ckpt_path}")
     dtype = get_dtype(dtype)
     model_kwargs = {"torch_dtype": dtype}
@@ -48,6 +48,8 @@ def get_model(ckpt_path, dtype="fp16", device="cuda"):
     device_map = "auto"
     if device == "cpu":
         device_map = "cpu"
+    if dist:
+        device_map = {"": device}
 
     model = AutoModelForCausalLM.from_pretrained(ckpt_path, device_map=device_map, trust_remote_code=True, **model_kwargs)
     model.eval()
