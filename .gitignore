@@ -4,7 +4,7 @@
 # user experiments directory
 model_repo*
 datasets/
-exp/
+exp*
 test*
 temp_config/
 
