@@ -2,6 +2,7 @@ import os
 import re
 import sys 
 import json
+import shutil
 import argparse
 import numpy as np
 from tqdm import tqdm
@@ -44,7 +45,7 @@ def main(args):
     cfg = load_json(args.config)
     ref_model_cfg = get_config(cfg["ref_model_dir"])
     work_dir = f"exp/SentenceVAE-{cfg['expn']}"
-    writer = SummaryWriter(os.path.join(work_dir, "eval"))
+    writer = SummaryWriter(f"exp/eval/SentenceVAE-{cfg['expn']}")
 
     model = SentenceVAE(
         hidden_size=ref_model_cfg.hidden_size,
@@ -104,10 +105,11 @@ def main(args):
             best_ppl = ppl 
             best_ckpt = ckpt_path
     
-    with open(os.path.join(work_dir, "best_checkpoint"), "w") as f:
-        f.write(ckpt_path)
-    with open(os.path.join(work_dir, "eval", "log.txt"), "w") as f:
+    with open(f"exp/eval/SentenceVAE-{cfg['expn']}/best_checkpoint", "w") as f:
+        f.write(best_ckpt)
+    with open(f"exp/eval/SentenceVAE-{cfg['expn']}/log.txt", "w") as f:
         f.write(f"Exp:{work_dir}\nBest PPL:{best_ppl}\nBest ckpt:{best_ckpt}")
+    shutil.copy(best_ckpt, f"exp/eval/SentenceVAE-{cfg['expn']}/best_checkpoint.pth")
     
     print("Exp:", work_dir)
     print("Best PPL:", best_ppl)
