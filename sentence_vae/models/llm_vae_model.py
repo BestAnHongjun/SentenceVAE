@@ -93,7 +93,7 @@ class LLMSentenceVAE(BaseModel):
         self.to(self.dtype)
         self.to(self.device)
 
-        # self._freeze_model(self.vae)
+        self._freeze_model(self.vae)
         if llm_finetune_layers >= 0 and llm_finetune_layers * 2 < len(self.llm_layers):
             for i in range(llm_finetune_layers, len(self.llm_layers) - llm_finetune_layers):
                 self._freeze_model(self.llm_layers[i])

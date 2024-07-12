@@ -36,15 +36,10 @@ def load_json(json_path):
 def main(args):
     cfg = load_json(args.config)
     ref_model_cfg = get_config(cfg["ref_model_dir"])
-    vae_dir = f"exp/SentenceVAE-{cfg['vae_expn']}"
+    vae_dir = f"exp/eval/SentenceVAE-{cfg['vae_expn']}"
 
-    best_ckpt_path = os.path.join(vae_dir, "best_checkpoint")
-    if os.path.exists(best_ckpt_path):
-        with open(best_ckpt_path, "r") as f:
-            best_ckpt_path = f.read().strip()
-    else:
-        print(f"Warning: {best_ckpt_path} not found.")
-        best_ckpt_path = None
+    best_ckpt_path = os.path.join(vae_dir, "best_checkpoint.pth")
+    assert os.path.exists(best_ckpt_path)
 
     if args.launcher != 'none':
         init_dist(args.launcher)
