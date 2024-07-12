@@ -19,6 +19,6 @@
     "dataloader_num_workers": 64,
     "dataloader_prefetch_factor": 20,
     "save_checkpoint_iters": 5000,
-    "finetune_epoches": 1,
+    "finetune_epoches": 4,
     "warmup_iters": 5000
 }
