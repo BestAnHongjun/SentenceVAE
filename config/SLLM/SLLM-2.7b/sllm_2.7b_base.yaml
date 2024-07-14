@@ -1,0 +1,7 @@
+__base__: !include ../sllm_base.yaml
+
+svae:
+  ref_model_dir: "model_repo/opt-2.7b"
+
+llm:
+  ref_model_dir: "model_repo/opt-2.7b"
