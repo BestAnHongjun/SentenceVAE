@@ -91,7 +91,7 @@ def main(args):
         optim_wrapper=dict(type="AmpOptimWrapper", optimizer=dict(type='AdamW', lr=learning_rate, weight_decay=0.01), clip_grad=dict(max_norm=5)),
         param_scheduler=[
             dict(type='LinearLR', start_factor=1e-3, by_epoch=False, begin=0, end=cfg["warmup_iters"]),
-            dict(type='CosineAnnealingLR', by_epoch=True, T_max=cfg["finetune_epoches"], convert_to_iter_based=True)
+            dict(type='CosineAnnealingLR', by_epoch=False, T_max=cfg["cosineannealinglr_tmax"])
         ],
         visualizer=dict(type='Visualizer', vis_backends=[dict(type='TensorboardVisBackend')]),
         default_hooks=default_hooks,
