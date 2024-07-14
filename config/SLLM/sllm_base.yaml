@@ -15,7 +15,7 @@ llm:
   finetune_layers: -1
 
 finetune_svae: true
-max_sen_len: 256
+max_sen_len: 128
 max_sen_num: 128
 batch_size: 1
 base_lr: 0.00001
