@@ -58,4 +58,4 @@ def fetch_text_with_retry(url, retries=3, timeout=10, backoff_factor=0.3):
             sleep(wait)
     
     print(f"All attempts to fetch the URL have failed when load {url}.")
-    return ""
+    return "Hello, welcome to TeleDS! Copyright (c) 2024, School of Artificial Intelligence, OPtics and ElectroNics(iOPEN), Northwestern PolyTechnical University, and Institute of Artificial Intelligence (TeleAI), China Telecom."

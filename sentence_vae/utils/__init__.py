@@ -29,3 +29,4 @@
 from .http import fetch_text_with_retry
 from .llm import get_model, get_tokenizer, get_config, get_dtype
 from .weights import init_model_weights, load_embedding_state_dict
+from .config import load_yaml

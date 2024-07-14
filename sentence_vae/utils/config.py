@@ -26,44 +26,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import torch
-from time import sleep
-from torch.utils.data import Dataset
-
-from sentence_vae.utils import fetch_text_with_retry
+import os
 
 
-class TeleDSDataset(Dataset):
-    def __init__(
-        self, 
-        server_ip="127.0.0.1", 
-        server_port=8000,
-        eval_mode=False,
-        eval_samples=1000
-    ):
-        self.server_url = f"http://{server_ip}:{server_port}"
-        self.eval_mode = eval_mode 
-        self.eval_samples = eval_samples
-
-    def __len__(self):
-        while True:
-            status = fetch_text_with_retry(f"{self.server_url}/status").strip()
-            if status != "ready.":
-                print("TeleDS Server is not ready, retrying.")
-            else: 
-                break
-            sleep(1)
-        # print("Server is ready!")
-        num = int(fetch_text_with_retry(f"{self.server_url}/count").strip())
-        assert num > self.eval_samples
-        if not self.eval_mode:
-            return num - self.eval_samples
+def recursive_update(d, u):
+    for k, v in u.items():
+        if isinstance(v, dict):
+            d[k] = recursive_update(d.get(k, {}), v)
         else:
-            return self.eval_samples
-    
-    def __getitem__(self, idx):
-        if not self.eval_mode:
-            idx += self.eval_samples
-        text = fetch_text_with_retry(f"{self.server_url}/data/{idx}")
-        return text
-        
+            d[k] = v
+    return d
+
+
+def load_yaml(yaml_path):
+    import yaml
+    import yaml_include
+    yaml.add_constructor("!include", yaml_include.Constructor(base_dir=os.path.dirname(os.path.abspath(yaml_path))))
+    with open(yaml_path, "r") as file:
+        config = yaml.full_load(file)
+    while "__base__" in config.keys():
+        base = config["__base__"]
+        del config["__base__"]
+        config = recursive_update(base, config)
+    return config
