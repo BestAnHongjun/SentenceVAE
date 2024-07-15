@@ -1,0 +1,3 @@
+__base__: !include ./svae_2048_base.yaml
+
+num_hidden_layers: 2

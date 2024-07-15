@@ -45,7 +45,7 @@ class SentenceDecoder(nn.Module):
         load_ref_model: Union[bool, nn.Module] = False,
         ref_model_dir: str = None,
         ref_model_dtype: torch.dtype = None,
-        finetune_embedding: bool = False,
+        finetune_embedding: bool = True,
         word_embed_proj_dim: int = None,
         num_attention_heads: int = 16, 
         num_hidden_layers: int = 1,

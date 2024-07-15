@@ -61,7 +61,7 @@ class SentenceLLM(BaseModel):
         bos_id=2,
         pad_id=1,
         end_id=2,
-        device: torch.dtype = None,
+        device: torch.device = None,
         dtype: torch.dtype = None,
     ):
         super().__init__()

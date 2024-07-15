@@ -1,0 +1,3 @@
+__base__: !include ../svae_base.yaml
+
+ref_model_dir: "model_repo/opt-1.3b"

@@ -32,6 +32,7 @@ import torch.nn.functional as F
 
 from mmengine.model import BaseModel
 
+from .focal_loss import FocalLoss
 from .sentence_encoder import SentenceEncoder
 from .sentence_decoder import SentenceDecoder
 from sentence_vae.utils import get_model, get_dtype
@@ -48,7 +49,7 @@ class SentenceVAE(BaseModel):
         load_ref_model: bool = False,
         ref_model_dir: str = None,
         ref_model_dtype: torch.dtype = None,
-        finetune_embedding: bool = False,
+        finetune_embedding: bool = True,
         word_embed_proj_dim: int = None,
         num_attention_heads: int = 16, 
         num_hidden_layers: int = 1,
@@ -87,6 +88,8 @@ class SentenceVAE(BaseModel):
             num_attention_heads, num_hidden_layers, max_seq_len,
             dropout, pad_id
         )
+
+        self.focal_loss = FocalLoss()
     
     def forward(self, input_ids, attention_mask=None, mode='loss'):
         input_ids = input_ids.to(self.device)
@@ -104,7 +107,8 @@ class SentenceVAE(BaseModel):
         seq_lens = torch.sum(attention_mask, dim=1, keepdim=True)
         tgt_ids.scatter_(1, seq_lens, self.eos_token_id)
         attention_mask = attention_mask.bool()
-        return {"total_loss": F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])}
+        # return {"total_loss": F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])}
+        return {"total_loss": self.focal_loss(output[attention_mask], tgt_ids[:, 1:][attention_mask])}
         
         # elif mode == 'predict':
         #     assert not self.training
