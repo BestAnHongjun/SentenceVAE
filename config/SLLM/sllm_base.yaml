@@ -16,7 +16,7 @@ llm:
 
 finetune_svae: true
 max_sen_len: 64
-max_sen_num: 128
+max_sen_num: 64
 batch_size: 1
 base_lr: 0.00001
 resume_train: true
