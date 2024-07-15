@@ -7,8 +7,8 @@ ref_model_dtype: null
 num_hidden_layers: 1
 finetune_embedding: true
 model_path: null
-max_seq_len: 128
-batch_size: 64
+max_seq_len: 64
+batch_size: 128
 base_lr: 0.000001
 resume_train: true
 dataloader_num_workers: 32
