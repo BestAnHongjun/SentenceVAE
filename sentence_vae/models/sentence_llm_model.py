@@ -32,7 +32,8 @@ import torch.nn.functional as F
 
 from mmengine.model import BaseModel
 
-from .sentence_vae_model import SentenceVAE, FocalLoss
+from .focal_loss import FocalLoss
+from .sentence_vae_model import SentenceVAE
 from sentence_vae.utils.llm import get_model
 
 
