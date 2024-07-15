@@ -51,6 +51,10 @@ class FocalLoss(nn.Module):
         log_targets_probs = torch.log(targets_probs + self.eps)
         loss = -focal_weight * log_targets_probs
 
+        loss = loss[~torch.isnan(loss)]
+        if loss.size(0) == 0:
+            return torch.tensor(0, requires_grad=True).to(targets.device)
+
         if self.reduction == 'mean':
             loss = torch.mean(loss)
         elif self.reduction == 'sum':
