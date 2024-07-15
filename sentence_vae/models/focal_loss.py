@@ -26,10 +26,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .positional_encoding import PositionalEncodding
-from .sentence_encoder import SentenceEncoder
-from .sentence_decoder import SentenceDecoder
-from .sentence_vae_model import SentenceVAE
-from .llm_vae_model import LLMSentenceVAE
-from .sentence_llm_model import SentenceLLM
-from .focal_loss import FocalLoss
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class FocalLoss(nn.Module):
+    def __init__(self, gamma=2.0, reduction='mean', eps=1e-6):
+        super(FocalLoss, self).__init__()
+        self.gamma = gamma
+        self.reduction = reduction
+        self.eps = eps
+
+    def forward(self, logits, targets):
+        max_logits = torch.max(logits, dim=-1, keepdim=True)[0]
+        log_probs = logits - max_logits 
+        log_probs = log_probs - torch.log(torch.sum(torch.exp(log_probs), dim=-1, keepdim=True))
+        probs = torch.exp(log_probs)
+
+        targets_one_hot = F.one_hot(targets, num_classes=logits.size(-1))
+        targets_probs = torch.sum(probs * targets_one_hot, dim=-1)
+
+        focal_weight = (1 - targets_probs) ** self.gamma
+        log_targets_probs = torch.log(targets_probs + self.eps)
+        loss = -focal_weight * log_targets_probs
+
+        if self.reduction == 'mean':
+            loss = torch.mean(loss)
+        elif self.reduction == 'sum':
+            loss = torch.sum(loss)
+        
+        return loss

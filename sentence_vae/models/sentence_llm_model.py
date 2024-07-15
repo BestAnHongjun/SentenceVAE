@@ -32,7 +32,7 @@ import torch.nn.functional as F
 
 from mmengine.model import BaseModel
 
-from .sentence_vae_model import SentenceVAE
+from .sentence_vae_model import SentenceVAE, FocalLoss
 from sentence_vae.utils.llm import get_model
 
 
@@ -89,6 +89,7 @@ class SentenceLLM(BaseModel):
         self.llm_layers = llm.model.decoder.layers
 
         self.fc = nn.Linear(svae_hidden_size, 2)
+        self.focal_loss = FocalLoss()
 
         if svae_model_path is not None:
             print(f"Loading {svae_model_path}")
@@ -139,10 +140,11 @@ class SentenceLLM(BaseModel):
         stop_loss = 0
         for b in range(batch_size):
             sen_len = sen_lens[b]
-            cls_cnt = torch.tensor([1, sen_len -1], device=self.device, dtype=self.dtype) / sen_len 
-            weights = 1.0 / cls_cnt 
-            weights = weights / weights.sum()
-            stop_loss += F.cross_entropy(stop_flag[b, :sen_len], tgt_stop_flag[b, :sen_len], weight=weights)
+            # cls_cnt = torch.tensor([1, sen_len - 1], device=self.device, dtype=self.dtype) / sen_len 
+            # weights = 1.0 / cls_cnt 
+            # weights = weights / weights.sum()
+            stop_loss += self.focal_loss(stop_flag[b, :sen_len], tgt_stop_flag[b, :sen_len])
+            # stop_loss += F.cross_entropy(stop_flag[b, :sen_len], tgt_stop_flag[b, :sen_len], weight=weights)
         stop_loss /= batch_size
 
         # decoder
@@ -159,7 +161,8 @@ class SentenceLLM(BaseModel):
             seq_lens = torch.sum(attention_mask, dim=1, keepdim=True)
             tgt_ids.scatter_(1, seq_lens, self.eos_token_id)
             attention_mask = attention_mask.bool()
-            decode_loss += F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])
+            decode_loss += self.focal_loss(output[attention_mask], tgt_ids[:, 1:][attention_mask])
+            # decode_loss += F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])
             del input_ids
             del attention_mask
             del sentence_embd
