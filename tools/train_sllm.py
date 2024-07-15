@@ -88,13 +88,14 @@ def main(args):
         work_dir=f"exp/SentenceVAE-{expn}",
         train_dataloader=train_dataloader,
         train_cfg=dict(by_epoch=True, max_epochs=cfg["finetune_epoches"]),
-        optim_wrapper=dict(type="AmpOptimWrapper", optimizer=dict(type='AdamW', lr=learning_rate, weight_decay=0.01), clip_grad=dict(max_norm=5)),
+        optim_wrapper=dict(type="AmpOptimWrapper", optimizer=dict(type='AdamW', lr=learning_rate, weight_decay=0.01), clip_grad=dict(max_norm=1)),
         param_scheduler=[
             dict(type='LinearLR', start_factor=1e-3, by_epoch=False, begin=0, end=cfg["warmup_iters"]),
             dict(type='CosineAnnealingLR', by_epoch=False, T_max=cfg["cosineannealinglr_tmax"])
         ],
         visualizer=dict(type='Visualizer', vis_backends=[dict(type='TensorboardVisBackend')]),
         default_hooks=default_hooks,
+        custom_hooks=[dict(type='EMAHook')],
         resume=cfg["resume_train"]
     )
     runner.train()
