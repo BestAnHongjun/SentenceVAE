@@ -41,6 +41,7 @@ class FocalLoss(nn.Module):
     def forward(self, logits, targets):
         max_logits = torch.max(logits, dim=-1, keepdim=True)[0]
         log_probs = logits - max_logits 
+        from icecream import ic 
         log_probs = log_probs - torch.log(torch.sum(torch.exp(log_probs), dim=-1, keepdim=True))
         probs = torch.exp(log_probs)
 
@@ -50,6 +51,10 @@ class FocalLoss(nn.Module):
         focal_weight = (1 - targets_probs) ** self.gamma
         log_targets_probs = torch.log(targets_probs + self.eps)
         loss = -focal_weight * log_targets_probs
+
+        loss = loss[~torch.isnan(loss)]
+        if loss.size(0) == 0:
+            return torch.tensor(0, requires_grad=True).to(targets.device)
 
         if self.reduction == 'mean':
             loss = torch.mean(loss)
