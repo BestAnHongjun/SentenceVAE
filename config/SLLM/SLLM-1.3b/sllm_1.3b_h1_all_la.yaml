@@ -1,4 +1,0 @@
-__base__: !include ./sllm_1.3b_h1_all.yaml
-
-svae:
-  learable_add: true
