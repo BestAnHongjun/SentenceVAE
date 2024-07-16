@@ -73,9 +73,9 @@ def main(args):
     default_hooks=dict(checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=cfg["save_checkpoint_iters"]))
     runner = Runner(
         model=model,
-        work_dir=f"exp/SentenceVAE-{expn}",
+        work_dir=f"exp/{expn}",
         train_dataloader=train_dataloader,
-        train_cfg=dict(by_epoch=True, max_epochs=cfg["finetune_epoches"]),
+        train_cfg=dict(by_epoch=False, max_iters=cfg["max_iters"]),
         optim_wrapper=dict(type="AmpOptimWrapper", optimizer=dict(type='AdamW', lr=learning_rate, weight_decay=0.01), clip_grad=dict(max_norm=1)),
         param_scheduler=[
             dict(type='LinearLR', start_factor=1e-3, by_epoch=False, begin=0, end=cfg["warmup_iters"]),

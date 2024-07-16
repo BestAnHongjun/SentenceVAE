@@ -9,11 +9,11 @@ finetune_embedding: true
 model_path: null
 max_seq_len: 64
 batch_size: 128
-base_lr: 0.000001
+base_lr: 0.0000001
 resume_train: true
 dataloader_num_workers: 32
 dataloader_prefetch_factor: 20
 save_checkpoint_iters: 10000
-finetune_epoches: 1
+max_iters: 300000
 warmup_iters: 5000
-cosineannealinglr_tmax: 10000
+cosineannealinglr_tmax: 20000
