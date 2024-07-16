@@ -171,5 +171,7 @@ class SentenceLLM(BaseModel):
             del pad_ids 
             del tgt_ids
         decode_loss /= batch_size
-        
+
+        if stop_loss < 1e-2:
+            return {"decode_loss": decode_loss}
         return {"stop_loss": stop_loss, "decode_loss": decode_loss}
