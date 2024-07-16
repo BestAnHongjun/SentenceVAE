@@ -78,7 +78,8 @@ class SentenceEncoder(nn.Module):
         )
         self.encoder = nn.TransformerEncoder(encoder_layer, num_hidden_layers)
         if self.learnable_add:
-            self.conv1d = nn.Conv1d(hidden_size, 1, kernel_size=3, stride=1, padding=1, bias=True)
+            self.la = nn.Linear(hidden_size, 1)
+            # self.conv1d = nn.Conv1d(hidden_size, 1, kernel_size=3, stride=1, padding=1, bias=True)
         self.lnorm = nn.LayerNorm(hidden_size, device=self.device, dtype=self.dtype)
 
         if isinstance(load_ref_model, nn.Module):
@@ -115,9 +116,11 @@ class SentenceEncoder(nn.Module):
         hidden_state[attention_mask] = 0    # (batch, seq_len, hidden)
 
         if self.learnable_add:
-            hidden_trans = hidden_state.transpose(2, 1).contiguous() # (batch, hidden, seq_len)
-            alpha = self.conv1d(hidden_trans)   # (batch, 1, seq_len)
-            alpha = alpha.transpose(2, 1).contiguous()   # (batch, seqlen, hidden)
+            alpha = self.la(hidden_state)
+            # print(alpha.shape)
+            # hidden_trans = hidden_state.transpose(2, 1).contiguous() # (batch, hidden, seq_len)
+            # alpha = self.conv1d(hidden_trans)   # (batch, 1, seq_len)
+            # alpha = alpha.transpose(2, 1).contiguous()   # (batch, seqlen, hidden)
             sentence_emb = torch.sum(hidden_state * alpha, dim=-2, keepdim=True)
         else:
             sentence_emb = torch.sum(hidden_state, dim=-2, keepdim=True)
