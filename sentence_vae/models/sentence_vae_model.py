@@ -107,36 +107,11 @@ class SentenceVAE(BaseModel):
         seq_lens = torch.sum(attention_mask, dim=1, keepdim=True)
         tgt_ids.scatter_(1, seq_lens, self.eos_token_id)
         attention_mask = attention_mask.bool()
-        # return {"total_loss": F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])}
-        return {"total_loss": self.focal_loss(output[attention_mask], tgt_ids[:, 1:][attention_mask])}
-        
-        # elif mode == 'predict':
-        #     assert not self.training
-            # batch, _ = input_ids.shape 
-            # with torch.no_grad():
-            #     output_ids = torch.zeros((batch, 1), dtype=torch.int64, device=self.device).fill_(self.bos_token_id)
-            #     output_masks = torch.ones((batch, 1), dtype=torch.int64, device=self.device)
-            #     finish_flag = torch.zeros((batch, 1), dtype=torch.bool, device=self.device)
-                
-            #     for i in range(self.max_seq_len):
-            #         pred = self.decoder(output_ids, sentence_embd, output_masks)
-            #         iter_out = torch.argmax(pred[:, -1, :], dim=-1, keepdim=True)
-            #         iter_eos = iter_out == self.eos_token_id
-                    
-            #         iter_out[finish_flag] = self.pad_token_id
-            #         output_ids =  torch.concat((output_ids, iter_out), dim=-1)
-            #         output_masks = torch.concat((output_masks, ~finish_flag), dim=-1)
-            #         finish_flag = finish_flag | iter_eos
-
-            #         if streaming:
-            #             yield iter_out
-
-            #         if torch.all(finish_flag):
-            #             break
-
-            # return output_ids, output_masks
-        
-        # else:   # tensor
-        #     output = self.decoder(input_ids, sentence_embd, attention_mask)
-        #     return output
+        if mode == 'loss':
+            loss = self.focal_loss(output[attention_mask], tgt_ids[:, 1:][attention_mask])
+            return {'total_loss': loss}
+        elif mode == 'predict':
+            return output, attention_mask, tgt_ids
+        else:
+            return output
         
