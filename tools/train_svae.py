@@ -13,7 +13,7 @@ from mmengine.dist.utils import init_dist
 
 from sentence_vae.utils import get_config, get_tokenizer, get_dtype, load_yaml
 from sentence_vae.models import SentenceVAE
-from sentence_vae.data import TeleDSDataset, SentenceCollate, PPL
+from sentence_vae.data import TeleDSDataset, SentenceCollate, SVAE_PPL
 
 
 def make_parser():
@@ -95,7 +95,7 @@ def main(args):
         train_dataloader=train_dataloader,
         val_dataloader=eval_dataloader,
         val_cfg=dict(),
-        val_evaluator=dict(type=PPL),
+        val_evaluator=dict(type=SVAE_PPL),
         train_cfg=dict(by_epoch=False, max_iters=cfg["max_iters"], val_interval=cfg["val_iters"]),
         optim_wrapper=dict(type="AmpOptimWrapper", optimizer=dict(type='AdamW', lr=learning_rate, weight_decay=0.01), clip_grad=dict(max_norm=1)),
         param_scheduler=[

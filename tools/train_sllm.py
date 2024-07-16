@@ -16,7 +16,7 @@ from mmengine.optim import AmpOptimWrapper
 
 from sentence_vae.utils import get_config, get_tokenizer, get_dtype, load_yaml
 from sentence_vae.models import SentenceLLM
-from sentence_vae.data import TeleDSDataset, PassageCollate
+from sentence_vae.data import TeleDSDataset, PassageCollate, SLLM_PPL
 
 torch.multiprocessing.set_sharing_strategy('file_system')
 
@@ -71,6 +71,10 @@ def main(args):
     train_sampler = DefaultSampler(train_dataset, shuffle=False)
     train_collate_fn = PassageCollate(tokenizer=tokenizer, max_sentence_len=cfg["max_sen_len"], max_sentence_num=cfg["max_sen_num"], padding=True)
 
+    eval_dataset = TeleDSDataset(server_ip=args.teleds_ip, server_port=args.teleds_port, eval_mode=True)
+    eval_sampler = DefaultSampler(eval_dataset, shuffle=False)
+    eval_collate_fn = PassageCollate(tokenizer=tokenizer, max_sentence_len=cfg["max_sen_len"], max_sentence_num=cfg["max_sen_num"], padding=True)
+
     train_dataloader = DataLoader(
         dataset=train_dataset,
         batch_size=cfg["batch_size"],
@@ -79,15 +83,32 @@ def main(args):
         num_workers=cfg["dataloader_num_workers"],
         prefetch_factor=cfg["dataloader_prefetch_factor"]
     )
+    eval_dataloader = DataLoader(
+        dataset=eval_dataset,
+        batch_size=cfg["batch_size"],
+        sampler=eval_sampler,
+        collate_fn=eval_collate_fn,
+        num_workers=cfg["dataloader_num_workers"],
+        prefetch_factor=cfg["dataloader_prefetch_factor"]
+    )
 
     learning_rate = cfg["batch_size"] * cfg["base_lr"]
 
-    default_hooks=dict(checkpoint=dict(type='CheckpointHook', by_epoch=False, interval=cfg["save_checkpoint_iters"]))
+    default_hooks=dict(checkpoint=dict(
+        type='CheckpointHook', 
+        by_epoch=False, 
+        interval=cfg["save_checkpoint_iters"],
+        max_keep_ckpts=cfg["max_keep_ckpts"],
+        save_best='ppl', rule='less', published_keys=['meta', 'state_dict']
+    ))
     runner = Runner(
         model=model,
         work_dir=f"exp/SentenceVAE-{expn}",
         train_dataloader=train_dataloader,
-        train_cfg=dict(by_epoch=True, max_epochs=cfg["finetune_epoches"]),
+        val_dataloader=eval_dataloader, 
+        val_cfg=dict(),
+        val_evaluator=dict(type=SLLM_PPL),
+        train_cfg=dict(by_epoch=False, max_iters=cfg["max_iters"], val_interval=cfg["val_iters"]),
         optim_wrapper=dict(type="AmpOptimWrapper", optimizer=dict(type='AdamW', lr=learning_rate, weight_decay=0.01), clip_grad=dict(max_norm=1)),
         param_scheduler=[
             dict(type='LinearLR', start_factor=1e-3, by_epoch=False, begin=0, end=cfg["warmup_iters"]),

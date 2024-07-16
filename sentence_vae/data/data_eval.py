@@ -26,49 +26,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import torch 
+import numpy as np 
+import torch.nn.functional as F
+from mmengine.evaluator import BaseMetric
 
 
-class TeleDSCollate:
-    def __init__(
-        self, 
-        tokenizer, 
-        max_len=1024, 
-        padding=True, 
-        fix_len=True
-    ):
-        self.tokenizer = tokenizer
-        self.max_len = max_len
-        self.padding = padding
-        self.fix_len = fix_len
+class SVAE_PPL(BaseMetric):
+    def process(self, data_batch, data_samples):
+        output, attention_mask, tgt_ids = data_samples
+        loss = F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])
+        result = {'loss': loss.item()}
+        self.results.append(result)
     
-    def __call__(self, texts):
-        encoded = self.tokenizer.batch_encode_plus(
-            texts, 
-            padding=self.padding, 
-            truncation=True, 
-            max_length=self.max_len, 
-            return_tensors="pt"
-        )
+    def compute_metrics(self, results):
+        loss = np.mean([res['loss'] for res in results])
+        ppl = np.exp(loss)
+        return dict(loss=loss, ppl=ppl)
 
-        input_ids = encoded['input_ids']
-        attention_mask = encoded['attention_mask']
 
-        if self.fix_len:
-            batch, seq_len = input_ids.shape
-            if seq_len < self.max_len: 
-                pad_ids = torch.zeros(
-                    (batch, self.max_len - seq_len), 
-                    dtype=input_ids.dtype, 
-                    device=input_ids.device
-                ).fill_(self.tokenizer.pad_token_id)
-                pad_mask = torch.zeros(
-                    (batch, self.max_len - seq_len),
-                    dtype=attention_mask.dtype,
-                    device=attention_mask.device
-                )
-                
-                input_ids = torch.concat((input_ids, pad_ids), dim=1)
-                attention_mask = torch.concat((attention_mask, pad_mask), dim=1)
+class SLLM_PPL(BaseMetric):
+    def process(self, data_batch, data_sample):
+        stop_loss, ppl_loss = data_sample
+        result = {'stop_loss': stop_loss.item(), 'ppl_loss': ppl_loss.item()}
+        self.results.append(result)
 
-        return input_ids, attention_mask
+    def compute_metrics(self, results):
+        stop_loss = np.mean([res['stop_loss'] for res in results])
+        loss = np.mean([res['ppl_loss'] for res in results])
+        ppl = np.exp(loss)
+        return dict(stop_loss=stop_loss, loss=loss, ppl=ppl)

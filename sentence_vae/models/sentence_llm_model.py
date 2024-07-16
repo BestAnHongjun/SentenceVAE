@@ -141,16 +141,13 @@ class SentenceLLM(BaseModel):
         stop_loss = 0
         for b in range(batch_size):
             sen_len = sen_lens[b]
-            # cls_cnt = torch.tensor([1, sen_len - 1], device=self.device, dtype=self.dtype) / sen_len 
-            # weights = 1.0 / cls_cnt 
-            # weights = weights / weights.sum()
             stop_loss += self.focal_loss(stop_flag[b, :sen_len], tgt_stop_flag[b, :sen_len])
-            # stop_loss += F.cross_entropy(stop_flag[b, :sen_len], tgt_stop_flag[b, :sen_len], weight=weights)
         stop_loss /= batch_size
 
         # decoder
         hidden_state = hidden_state.view(batch_size, sen_num, 1, self.hidden_size)
         decode_loss = 0
+        ppl_loss = 0
         for b in range(batch_size):
             sen_len = sen_lens[b]
             input_ids = sentence_toks[b, 1:sen_len]
@@ -163,7 +160,7 @@ class SentenceLLM(BaseModel):
             tgt_ids.scatter_(1, seq_lens, self.eos_token_id)
             attention_mask = attention_mask.bool()
             decode_loss += self.focal_loss(output[attention_mask], tgt_ids[:, 1:][attention_mask])
-            # decode_loss += F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])
+            ppl_loss += F.cross_entropy(output[attention_mask], tgt_ids[:, 1:][attention_mask])
             del input_ids
             del attention_mask
             del sentence_embd
@@ -171,7 +168,11 @@ class SentenceLLM(BaseModel):
             del pad_ids 
             del tgt_ids
         decode_loss /= batch_size
+        ppl_loss /= batch_size
 
-        if stop_loss < 1e-2:
-            return {"decode_loss": decode_loss}
-        return {"stop_loss": stop_loss, "decode_loss": decode_loss}
+        if mode == 'loss':
+            if stop_loss < 1e-2:
+                return {"decode_loss": decode_loss}
+            return {"stop_loss": stop_loss, "decode_loss": decode_loss}
+        elif mode == 'predict':
+            return stop_loss, ppl_loss
