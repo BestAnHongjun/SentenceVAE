@@ -41,7 +41,7 @@ class SVAE_PPL(BaseMetric):
     def compute_metrics(self, results):
         loss = np.mean([res['loss'] for res in results])
         ppl = np.exp(loss)
-        return dict(loss=loss, ppl=ppl)
+        return dict(eval_loss=loss, eval_ppl=ppl)
 
 
 class SLLM_PPL(BaseMetric):
@@ -54,4 +54,4 @@ class SLLM_PPL(BaseMetric):
         stop_loss = np.mean([res['stop_loss'] for res in results])
         loss = np.mean([res['ppl_loss'] for res in results])
         ppl = np.exp(loss)
-        return dict(stop_loss=stop_loss, loss=loss, ppl=ppl)
+        return dict(eval_stop_loss=stop_loss, eval_loss=loss, eval_ppl=ppl)

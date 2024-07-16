@@ -99,7 +99,7 @@ def main(args):
         by_epoch=False, 
         interval=cfg["save_checkpoint_iters"],
         max_keep_ckpts=cfg["max_keep_ckpts"],
-        save_best='ppl', rule='less', published_keys=['meta', 'state_dict']
+        save_best='eval_ppl', rule='less', published_keys=['meta', 'state_dict']
     ))
     runner = Runner(
         model=model,
