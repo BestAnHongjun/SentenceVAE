@@ -1,0 +1,3 @@
+__base__: !include ./svae_1024_h2.yaml
+
+learnable_add: true
