@@ -1,0 +1,4 @@
+__base__: !include ./sllm_125m_h4_all.yaml
+
+svae:
+  learable_add: true

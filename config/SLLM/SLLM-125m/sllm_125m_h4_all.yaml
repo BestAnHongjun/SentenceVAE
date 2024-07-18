@@ -1,0 +1,7 @@
+__base__: !include ./sllm_125m_base.yaml
+
+svae:
+  num_hidden_layers: 4
+
+llm:
+  finetune_layers: -1
