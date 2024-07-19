@@ -1,7 +1,0 @@
-__base__: !include ./sllm_350m_base.yaml
-
-svae:
-  num_hidden_layers: 2
-
-llm:
-  finetune_layers: 8
