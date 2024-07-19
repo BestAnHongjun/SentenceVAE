@@ -36,15 +36,10 @@ def make_parser():
 
 
 def main(args):
-    # cfg = load_json(args.config)
-    # ref_model_cfg = get_config(cfg["ref_model_dir"])
-    # work_dir = f"exp/SentenceVAE-{cfg['expn']}"
-    # writer = SummaryWriter(f"exp/eval/SentenceVAE-{cfg['expn']}")
-
     model = get_model(args.model_dir, args.model_dtype, args.device).eval()
     tokenizer = get_tokenizer(ckpt_path=args.model_dir, max_seq_len=args.max_seq_len)
 
-    eval_dataset = TeleDSDataset(server_ip=args.server, server_port=args.port, max_samples=args.max_eval_samples)
+    eval_dataset = TeleDSDataset(server_ip=args.server, server_port=args.port, eval_mode=True, eval_samples=args.max_eval_samples)
     eval_sampler = DefaultSampler(eval_dataset, shuffle=False)
     eval_collate_fn = SentenceCollate(tokenizer=tokenizer, max_len=args.max_seq_len, padding=True)
 
