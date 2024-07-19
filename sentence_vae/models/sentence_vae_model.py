@@ -114,4 +114,30 @@ class SentenceVAE(BaseModel):
             return output, attention_mask, tgt_ids
         else:
             return output
-        
+    
+    def streaming_generate(self, input_ids, attention_mask=None, max_output_len=64):
+        batch_size = input_ids.size(0)
+        assert batch_size == 1
+
+        input_ids = input_ids.to(self.device)
+        if attention_mask is not None:
+            attention_mask = attention_mask.to(self.device)
+        else:
+            attention_mask = torch.ones(input_ids.shape, dtype=torch.int64, device=self.device)
+
+        sentence_embd = self.encoder(input_ids, attention_mask)
+
+        output_ids = torch.tensor([[self.bos_token_id]], dtype=torch.long, device=self.device)
+        while len(output_ids) < max_output_len:
+            logits = self.decoder(output_ids, sentence_embd)
+            new_id = torch.argmax(logits[:, -1:], dim=-1)
+            output_ids = torch.concat((output_ids, new_id), dim=1)
+            yield new_id
+            if new_id.item() == self.eos_token_id:
+                break 
+
+    def generate(self, input_ids, attention_mask=None, max_output_len=64):
+        output_ids = []
+        for output_id in self.streaming_generate(input_ids, attention_mask, max_output_len):
+            output_ids.append(output_id.item())
+        return output_ids
