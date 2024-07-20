@@ -37,6 +37,7 @@ from sentence_vae.utils import get_config, get_tokenizer, get_dtype, load_yaml
 def make_parser():
     parser = argparse.ArgumentParser("SentenceVAE demo parser.")
     parser.add_argument("-c", "--config", type=str, required=True)
+    parser.add_argument("--checkpoint", type=str, default=None)
     return parser
 
 
@@ -65,12 +66,16 @@ def main(args):
     )
     exp_dir = f"exp/{expn}"
     ckpt_list = os.listdir(exp_dir)
-    ckpt = None
-    for ckpt_path in ckpt_list:
-        if "best" in ckpt_path:
-            ckpt_path = os.path.join(exp_dir, ckpt_path)
-            ckpt = torch.load(ckpt_path)['state_dict']
-    assert ckpt is not None, f"Not found the best checkpoint under {exp_dir}."
+    ckpt = args.checkpoint
+    if ckpt is None:
+        for ckpt_path in ckpt_list:
+            if "best" in ckpt_path:
+                ckpt_path = os.path.join(exp_dir, ckpt_path)
+                ckpt = torch.load(ckpt_path)['state_dict']
+        assert ckpt is not None, f"Not found the best checkpoint under {exp_dir}."
+    else:
+        assert os.path.exists(ckpt), f"Checkpoint {ckpt} not found."
+        ckpt = torch.load(ckpt)["state_dict"]
     model.load_state_dict(ckpt)
     model.eval()
 
@@ -113,16 +118,16 @@ def main(args):
             print(output_word, end='')
         print()
     
-    exit(0)
+    # exit(0)
     
-    output_ids, output_mask = model(input_ids, attention_mask, mode='predict')
+    # output_ids, output_mask = model(input_ids, attention_mask, mode='predict')
 
-    output_texts = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
+    # output_texts = tokenizer.batch_decode(output_ids, skip_special_tokens=True)
 
-    print("VAE input:")
-    print(input_texts)
-    print("VAE output:")
-    print(output_texts)
+    # print("VAE input:")
+    # print(input_texts)
+    # print("VAE output:")
+    # print(output_texts)
 
 
 if __name__ == "__main__":
