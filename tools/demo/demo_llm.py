@@ -26,19 +26,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import time
-import argparse
-import numpy as np
-from tqdm import tqdm
-
 import torch
-from torch.utils.data import DataLoader
+import argparse
 
-from mmengine.dataset import DefaultSampler
-
-from sentence_vae.utils import get_model, get_tokenizer, get_dtype
-from sentence_vae.models import SentenceVAE
-from sentence_vae.data import TeleDSDataset, SentenceCollate
+from sentence_vae.utils import get_model, get_tokenizer
+from sentence_vae.data import SentenceCollate
 
 
 def make_parser():
