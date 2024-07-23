@@ -29,7 +29,7 @@
 import torch
 import argparse
 from mmengine.analysis import get_model_complexity_info
-from sentence_vae.utils import get_model, get_tokenizer, get_dtype
+from sentence_vae.utils import get_model
 
 
 def make_parser():
