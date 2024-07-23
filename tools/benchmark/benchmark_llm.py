@@ -37,7 +37,6 @@ from torch.utils.data import DataLoader
 from mmengine.dataset import DefaultSampler
 
 from sentence_vae.utils import get_model, get_tokenizer
-from sentence_vae.models import SentenceVAE
 from sentence_vae.data import TeleDSDataset, SentenceCollate
 
 

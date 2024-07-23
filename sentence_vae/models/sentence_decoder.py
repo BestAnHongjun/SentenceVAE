@@ -32,7 +32,7 @@ from typing import Union
 
 from sentence_vae.models import PositionalEncodding
 from sentence_vae.utils.llm import get_model
-from sentence_vae.utils.weights import init_model_weights, load_embedding_state_dict
+from sentence_vae.utils.weights import load_embedding_state_dict
 
 
 class SentenceDecoder(nn.Module):

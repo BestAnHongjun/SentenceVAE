@@ -27,15 +27,13 @@
 # THE SOFTWARE.
 
 import torch 
-import torch.nn as nn 
-import torch.nn.functional as F
 
 from mmengine.model import BaseModel
 
 from .focal_loss import FocalLoss
 from .sentence_encoder import SentenceEncoder
 from .sentence_decoder import SentenceDecoder
-from sentence_vae.utils import get_model, get_dtype
+from sentence_vae.utils import get_model
 
 
 class SentenceVAE(BaseModel):
