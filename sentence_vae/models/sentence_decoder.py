@@ -120,3 +120,31 @@ class SentenceDecoder(nn.Module):
         output = self.linear(hidden_state)
 
         return output
+    
+
+    def streaming_generate(
+        self, sentence_embed, 
+        max_output_len:int=64, 
+        bos_token_id: int=2, 
+        eos_token_id: int=2
+    ):
+        output_ids = torch.tensor([[bos_token_id]], dtype=torch.long, device=self.device)
+        while len(output_ids) < max_output_len:
+            logits = self.forward(output_ids, sentence_embed)
+            new_id = torch.argmax(logits[:, -1:], dim=-1)
+            output_ids = torch.concat((output_ids, new_id), dim=1)
+            yield new_id.item()
+            if new_id.item() == eos_token_id:
+                break 
+    
+
+    def generate(
+        self, sentence_embed, 
+        max_output_len:int=64, 
+        bos_token_id: int=2, 
+        eos_token_id: int=2
+    ):
+        output_ids = []
+        for output_id in self.streaming_generate(sentence_embed, max_output_len, bos_token_id, eos_token_id):
+            output_ids.append(output_id)
+        return output_ids

@@ -176,3 +176,55 @@ class SentenceLLM(BaseModel):
             return {"stop_loss": stop_loss, "decode_loss": decode_loss}
         elif mode == 'predict':
             return stop_loss, ppl_loss
+    
+
+    def streaming_generate(self, sentence_mask, sentence_toks, tok_mask, max_sentence_num=64, token_level=False):
+        batch_size, sen_num, seq_len = sentence_toks.shape
+        assert batch_size == 1
+
+        sentence_mask = sentence_mask[:batch_size].to(self.device)
+        sen_num = torch.sum(sentence_mask)
+        sentence_mask = sentence_mask[:batch_size, :sen_num]
+        sentence_toks = sentence_toks[:batch_size, :sen_num].to(self.device)
+        tok_mask = tok_mask[:batch_size, :sen_num].to(self.device)
+        
+        sentence_embedding = torch.zeros(
+            (batch_size, sen_num, self.hidden_size),
+            dtype=self.dtype, device=self.device
+        )
+
+        # encoder
+        for b in range(batch_size):
+            sentence_embedding[b] = self.svae.encoder(sentence_toks[b], tok_mask[b]).view(sen_num, self.hidden_size)
+            sentence_embedding[b][~sentence_mask[b].bool()] = 0
+
+        # llm
+        pos_emb = self.llm_pe(sentence_mask, 0)
+        hidden_state = sentence_embedding + pos_emb
+        past_key_values = []
+        past_key_values_length = sen_num
+        for layer in self.llm_layers:
+            hidden_state, kv_cache = layer(hidden_state, use_cache=True)
+            past_key_values.append(kv_cache)
+
+        while past_key_values_length < max_sentence_num:
+            stop_flag = torch.argmax(self.fc(hidden_state[:batch_size, -1:, :]), dim=-1)
+            if stop_flag.item() == 0:
+                break 
+            new_sentence = self.svae.decoder.generate(
+                hidden_state[:batch_size, -1:, :],
+                self.max_sentence_len, 
+                self.bos_token_id,
+                self.eos_token_id
+            )
+
+            yield new_sentence
+
+            new_sentence = torch.tensor([new_sentence], dtype=torch.long, device=self.device)
+            new_sentence_embedding = self.svae.encoder(new_sentence)
+            pos_emb = self.llm_pe(torch.ones((1, past_key_values_length + 1), dtype=torch.long, device=self.device), past_key_values_length)
+            past_key_values_length += 1
+            hidden_state = new_sentence_embedding + pos_emb
+            for i, layer in enumerate(self.llm_layers):
+                hidden_state, kv_cache = layer(hidden_state, past_key_value=past_key_values[i], use_cache=True)
+                past_key_values[i] = kv_cache 
