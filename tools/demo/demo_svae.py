@@ -38,6 +38,7 @@ def make_parser():
     parser = argparse.ArgumentParser("SentenceVAE demo parser.")
     parser.add_argument("-c", "--config", type=str, required=True)
     parser.add_argument("--checkpoint", type=str, default=None)
+    parser.add_argument("--input", type=str, default=None)
     return parser
 
 
@@ -81,20 +82,23 @@ def main(args):
 
     tokenizer = get_tokenizer(ckpt_path=cfg["ref_model_dir"], max_seq_len=cfg["max_seq_len"])
 
-    input_texts = [
-        'I love China.',
-        'We come from Northwestern Polytechnical University.',
-        "Hello,",
-        "Welcome to TeleAI!",
-        "What's your name?", 
-        "What's your problem?", 
-        "Hello, my dear friend", 
-        "Today is Friday.",
-        "There is Institute of Artificial Intelligence (TeleAI), China Telecom.",
-        "One two three four five six seven eight nine ten~",
-        "Hahaha... and you?", 
-        "Yao yao ling xian!"
-    ]
+    if args.input is None:
+        input_texts = [
+            'I love China.',
+            'We come from Northwestern Polytechnical University.',
+            "Hello,",
+            "Welcome to TeleAI!",
+            "What's your name?", 
+            "What's your problem?", 
+            "Hello, my dear friend", 
+            "Today is Friday.",
+            "There is Institute of Artificial Intelligence (TeleAI), China Telecom.",
+            "One two three four five six seven eight nine ten~",
+            "Hahaha... and you?", 
+            "Yao yao ling xian!"
+        ]
+    else: 
+        input_texts = [args.input]
 
     input_ids = tokenizer.batch_encode_plus(
         input_texts, 
@@ -114,7 +118,7 @@ def main(args):
         print(f"\tTokens:{input_ids.size(1)}")
         print("\tVAE Output: ", end="")
         for output_id in model.streaming_generate(input_ids):
-            output_word = tokenizer.decode(output_id[0], skip_special_tokens=True)
+            output_word = tokenizer.decode(output_id, skip_special_tokens=True)
             print(output_word, end='')
         print()
     
