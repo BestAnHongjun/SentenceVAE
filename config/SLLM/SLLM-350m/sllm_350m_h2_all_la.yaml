@@ -1,4 +1,0 @@
-__base__: !include ./sllm_350m_h2_all.yaml
-
-svae:
-  learable_add: true
