@@ -64,7 +64,7 @@ def main(args):
         bos_id=ref_model_cfg.bos_token_id,
         pad_id=ref_model_cfg.pad_token_id,
         end_id=ref_model_cfg.eos_token_id
-    )
+    ).eval()
 
     batch_size = cfg["batch_size"] * args.cards
     device = torch.device(args.device)
