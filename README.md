@@ -3,6 +3,12 @@
 
 ![Static Badge](https://img.shields.io/badge/license-MIT-green) ![Static Badge](https://img.shields.io/badge/version-0.0.1-blue) [![Static Badge](https://img.shields.io/badge/paper-arXiv-red)](https://arxiv.org/abs/2408.00655)
 
+Hongjun An<sup>1,2*</sup>,Yifan Chen<sup>1,2*</sup>,Zhe Sun<sup>1,2✉</sup> & Xuelong Li<sup>1,2✉</sup>
+
+<sup><a href="https://iopen.nwpu.edu.cn/">1</a></sup>School of Artificial Intelligence, OPtics and ElectroNics(iOPEN), Northwestern PolyTechnical University
+
+<sup>2</sup>Institute of Artificial Intelligence (TeleAI), China Telecom
+
 
 English | [简体中文](README_zh-CN.md)
 
