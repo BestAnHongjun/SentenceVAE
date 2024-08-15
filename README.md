@@ -13,7 +13,7 @@ English | [简体中文](README_zh-CN.md)
 Current large language models (LLMs) primarily utilize next-token prediction method for inference, which significantly impedes their processing speed. In this [paper](https://arxiv.org/abs/2408.00655), we introduce a novel inference methodology termed next-sentence prediction, aiming at enhancing the inference efficiency of LLMs. We present Sentence Variational Autoencoder (SentenceVAE), which includes a Sentence Encoder to compress multiple tokens in a sentence into a single token, and a Sentence Decoder to reconstruct it. 
 
 <div align="center">
-    <img src="assets/sentence_vae.jpg" width="250"><br>
+    <img src="assets/sentence_vae.svg" width="250"><br>
     <span><small>Fig. 1. The schematic form of SentenceVAE. </small></span>
 </div>
 
@@ -21,7 +21,7 @@ Current large language models (LLMs) primarily utilize next-token prediction met
 By integrating SentenceVAE into the input and output layers of LLMs, we develop Sentence-level LLMs (SLLMs) that employ a sentence-by-sentence inference method.
 
 <div align="center">
-    <img src="assets/sllm.jpg">
+    <img src="assets/sllm.svg">
     <span><small>Fig. 2. (a) The schematic form of published LLMs. (b) The schematic form of SLLMs, which embedded with SentenceVAEs.</small></span>
 </div>
 
@@ -142,6 +142,6 @@ The SLLMs can maintain the integrity of the original semantic content by segment
 In addition, by corroborating the Scaling Law, we extrapolated the feasibility of our methodologies to larger-scale models.
 
 <div align="center">
-    <img src="assets/scaling_law.jpg">
+    <img src="assets/scaling_law.svg">
     <span><small>Fig. 3. Scaling Law of (a) SLLMs and (b) SVAEs.</small></span>
 </div>
