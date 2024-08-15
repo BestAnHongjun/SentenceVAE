@@ -66,7 +66,7 @@ setuptools.setup(
     include_package_data=True,  # include files in MANIFEST.in
     classifiers=[
         "Programming Language :: Python :: 3", "Operating System :: OS Independent",
-        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: MIT Software License",
     ],
     project_urls={
         "paper": "https://arxiv.org/abs/2408.00655",
