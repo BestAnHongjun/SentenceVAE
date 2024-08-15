@@ -56,7 +56,7 @@ setuptools.setup(
     name="sentence_vae",
     version=get_sentence_vae_version(),
     author="Coder.AN",
-    url="",
+    url="https://github.com/BestAnHongjun/SentenceVAE",
     packages=setuptools.find_packages(exclude=("tools")),
     python_requires=">=3.8",
     install_requires=get_install_requirements(),
@@ -69,8 +69,7 @@ setuptools.setup(
         "License :: OSI Approved :: Apache Software License",
     ],
     project_urls={
-        "Documentation": "",
-        "Source": "",
-        "Tracker": "",
+        "paper": "https://arxiv.org/abs/2408.00655",
+        "Source": "https://github.com/BestAnHongjun/SentenceVAE",
     },
 )
