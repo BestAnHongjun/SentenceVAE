@@ -1,6 +1,6 @@
-# Copyright (c) 2024, School of Artificial Intelligence, OPtics and 
-# ElectroNics(iOPEN), Northwestern PolyTechnical University, and Institute of 
-# Artificial Intelligence (TeleAI), China Telecom.
+# Copyright (c) 2024, School of Artificial Intelligence, OPtics and ElectroNics(iOPEN), 
+# Northwestern PolyTechnical University, 
+# and Institute of Artificial Intelligence (TeleAI), China Telecom.
 #
 # Author:   Coder.AN (an.hongjun@foxmail.com)
 #           Huasen Chen (chenyifan1@mail.nwpu.edu.cn)
