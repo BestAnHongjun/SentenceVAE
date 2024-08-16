@@ -213,15 +213,15 @@ Step1. Download a pretrained model from table below.
 
 |Model|Hidden Size|Hidden Layers|Loss↓|PPL↓|Download Link|
 |:-:|:-:|:-:|:-:|:-:|:-:|
-|SVAE-768-H1|768|1|1.339|3.605|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-768-H1.pth)|
-|SVAE-768-H2|768|2|1.019|2.588|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-768-H2.pth)|
-|SVAE-768-H4|768|4|**0.5598**|**1.649**|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-768-H4.pth)|
-|SVAE-1024-H1|1024|1|0.9266|2.406|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-1024-H1.pth)|
-|SVAE-1024-H2|1024|2|0.6610|1.845|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-1024-H2.pth)|
-|SVAE-1024-H4|1024|4|**0.3704**|**1.384**|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-1024-H4.pth)|
-|SVAE-2048-H1|2048|1|0.5165|1.622|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-2048-H1.pth)|
-|SVAE-2048-H2|2048|2|0.2845|1.292|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-2048-H2.pth)|
-|SVAE-2048-H4|2048|4|**0.1270**|**1.115**|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-2048-H4.pth)|
+|SVAE-768-H1|768|1|1.339|3.605|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-768-H1.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-768-H1.pth&sign=d8239cd4b6979b61ee0b969ef54f1a78&nonce=1723800234481)|
+|SVAE-768-H2|768|2|1.019|2.588|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-768-H2.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-768-H2.pth&sign=c11ca77f7934d4b441e7a6ae5359157f&nonce=1723800264673)|
+|SVAE-768-H4|768|4|**0.5598**|**1.649**|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-768-H4.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-768-H4.pth&sign=829995892eba42caf3f28a0f77a28d9e&nonce=1723800281621)|
+|SVAE-1024-H1|1024|1|0.9266|2.406|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-1024-H1.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-1024-H1.pth&sign=b3d5202c64d117389131def1b35e2f33&nonce=1723800301123)|
+|SVAE-1024-H2|1024|2|0.6610|1.845|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-1024-H2.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-1024-H2.pth&sign=f4ba19e8f474068598f8186be14a7ab4&nonce=1723800319623)|
+|SVAE-1024-H4|1024|4|**0.3704**|**1.384**|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-1024-H4.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-1024-H4.pth&sign=6ff668d782383e4bf01d1337a98910b3&nonce=1723800343431)|
+|SVAE-2048-H1|2048|1|0.5165|1.622|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-2048-H1.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-2048-H1.pth&sign=4d1ef8d0d0cf0f48e406eb73d74bb5cf&nonce=1723800363566)|
+|SVAE-2048-H2|2048|2|0.2845|1.292|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-2048-H2.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-2048-H2.pth&sign=7cc09034413bcfdb0fcbd875e6ad4be4&nonce=1723800379541)|
+|SVAE-2048-H4|2048|4|**0.1270**|**1.115**|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceVAE/resolve/master/SVAE-2048-H4.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceVAE/main?filepath=SVAE-2048-H4.pth&sign=8d09686dbcd6aaf0aeaf70a537de1836&nonce=1723800393625)|
 
 </div>
 
@@ -259,14 +259,14 @@ Step1. Download a pretrained model from table below.
 
 |Model|Download Link|
 |:-:|:-:|
-|SLLM-125M-H1|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-125M-H1.pth)|
-|SLLM-125M-H2|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-125M-H2.pth)|
-|SLLM-125M-H4|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-125M-H4.pth)|
-|SLLM-350M-H1|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-350M-H1.pth)|
-|SLLM-350M-H2|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-350M-H2.pth)|
-|SLLM-350M-H4|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-350M-H4.pth)|
-|SLLM-1.3B-H1|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-1.3B-H1.pth)|
-|SLLM-1.3B-H2|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-1.3B-H2.pth)|
+|SLLM-125M-H1|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-125M-H1.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceLLM/main?filepath=SLLM-125M-H1.pth&sign=b170645b08b03ee1240b95267c7454ca&nonce=1723800424069)|
+|SLLM-125M-H2|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-125M-H2.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceLLM/main?filepath=SLLM-125M-H2.pth&sign=fb3e59ef4c30dcea0d732af741d183b2&nonce=1723800472802)|
+|SLLM-125M-H4|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-125M-H4.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceLLM/main?filepath=SLLM-125M-H4.pth&sign=d8d1c1aa1d516e26fe21cb1ca3220e62&nonce=1723800484902)|
+|SLLM-350M-H1|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-350M-H1.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceLLM/main?filepath=SLLM-350M-H1.pth&sign=bc5e5e777a1bc41a1a564a7e52a2bf94&nonce=1723800502532)|
+|SLLM-350M-H2|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-350M-H2.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceLLM/main?filepath=SLLM-350M-H2.pth&sign=6c8ba81b806649366df99c96fbe3e4ed&nonce=1723800517836)|
+|SLLM-350M-H4|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-350M-H4.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceLLM/main?filepath=SLLM-350M-H4.pth&sign=e5722a48a5ff516e61cf9efdc1ee8230&nonce=1723800534148)|
+|SLLM-1.3B-H1|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-1.3B-H1.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceLLM/main?filepath=SLLM-1.3B-H1.pth&sign=77edd326c8e46eebd98f7f545f4d4e0c&nonce=1723800549084)|
+|SLLM-1.3B-H2|[ModelScope](https://modelscope.cn/models/CoderAN/SentenceLLM/resolve/master/SLLM-1.3B-H2.pth)<br>[OpenXLab](https://download.openxlab.org.cn/repos/file/Coder-AN/SentenceLLM/main?filepath=SLLM-1.3B-H2.pth&sign=54dc841b8a067afe7a2fbd16a6c0a2e5&nonce=1723800565365)|
 
 </div>
 
